@@ -23,8 +23,10 @@ RSpec.describe PhoneNumbersController, type: :controller do
   # This should return the minimal set of attributes required to create a valid
   # PhoneNumber. As you add validations to PhoneNumber, be sure to
   # adjust the attributes here as well.
+  let(:alice) { Person.create(first_name: 'Alice', last_name: 'Smith') }
+
   let(:valid_attributes) {
-    { number: "234567", person_id: 1}
+    { number: "234567", person_id: alice.id}
   }
 
   let(:invalid_attributes) {
@@ -69,6 +71,8 @@ RSpec.describe PhoneNumbersController, type: :controller do
 
   describe "POST #create" do
     context "with valid params" do
+      let(:alice) { Person.create(first_name: 'Alice', last_name: 'Smith') }
+
       it "creates a new PhoneNumber" do
         expect {
           post :create, params: {phone_number: valid_attributes}, session: valid_session
@@ -81,9 +85,11 @@ RSpec.describe PhoneNumbersController, type: :controller do
         expect(assigns(:phone_number)).to be_persisted
       end
 
-      it "redirects to the created phone_number" do
-        post :create, params: {phone_number: valid_attributes}, session: valid_session
-        expect(response).to redirect_to(PhoneNumber.last)
+      it "redirects to the phone number's person" do
+        alice = Person.create(first_name: 'Alice', last_name: 'Smith')
+        valid_attributes = {number: '555-8888', person_id: alice.id}
+        post :create, {:phone_number => valid_attributes}, valid_session
+        expect(response).to redirect_to(alice)
       end
     end
 
@@ -103,7 +109,7 @@ RSpec.describe PhoneNumbersController, type: :controller do
   describe "PUT #update" do
     context "with valid params" do
       let(:new_attributes) {
-        { number: "234567", person_id: 2}
+        { number: "234567", person_id: 1}
       }
 
       it "updates the requested phone_number" do
@@ -111,7 +117,7 @@ RSpec.describe PhoneNumbersController, type: :controller do
         put :update, params: {id: phone_number.to_param, phone_number: new_attributes}, session: valid_session
         phone_number.reload
         expect(phone_number.number).to eq('234567')
-        expect(phone_number.person_id).to eq(2)
+        expect(phone_number.person_id).to eq(1)
       end
 
       it "assigns the requested phone_number as @phone_number" do
