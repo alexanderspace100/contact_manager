@@ -71,6 +71,8 @@ RSpec.describe EmailAddressesController, type: :controller do
 
   describe "POST #create" do
     context "with valid params" do
+      let(:alice) { Person.create(first_name: 'Alice', last_name: 'Smith') }
+
       it "creates a new EmailAddress" do
         expect {
           post :create, params: {email_address: valid_attributes}, session: valid_session
@@ -84,8 +86,10 @@ RSpec.describe EmailAddressesController, type: :controller do
       end
 
       it "redirects to the created email_address" do
+        alice = Person.create(first_name: 'Alice', last_name: 'Smith')
+        valid_attributes = {address: 'email@example.com', person_id: alice.id}
         post :create, params: {email_address: valid_attributes}, session: valid_session
-        expect(response).to redirect_to(EmailAddress.last)
+        expect(response).to redirect_to(alice)
       end
     end
 
@@ -123,9 +127,11 @@ RSpec.describe EmailAddressesController, type: :controller do
       end
 
       it "redirects to the email_address" do
+        alice = Person.create(first_name: 'Alice', last_name: 'Smith')
+        valid_attributes = { address: 'email@example.com', person_id: alice.id}
         email_address = EmailAddress.create! valid_attributes
         put :update, params: {id: email_address.to_param, email_address: valid_attributes}, session: valid_session
-        expect(response).to redirect_to(email_address)
+        expect(response).to redirect_to(alice)
       end
     end
 
@@ -152,10 +158,12 @@ RSpec.describe EmailAddressesController, type: :controller do
       }.to change(EmailAddress, :count).by(-1)
     end
 
-    it "redirects to the email_addresses list" do
+    it "redirects to the person" do
+      alice = Person.create(first_name: 'Alice', last_name: 'Smith')
+      valid_attributes = { address: 'email@example.com', person_id: alice.id}
       email_address = EmailAddress.create! valid_attributes
       delete :destroy, params: {id: email_address.to_param}, session: valid_session
-      expect(response).to redirect_to(email_addresses_url)
+      expect(response).to redirect_to(alice)
     end
   end
 
