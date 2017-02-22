@@ -1,6 +1,6 @@
-<h1>Editing Email Address</h1>
+<h1><%= "Edit Email Address for #{@email_address.contact}" %></h1>
 
 <%= render 'form', email_address: @email_address %>
 
 <%= link_to 'Show', @email_address %> |
-<%= link_to 'Back', email_addresses_path %>
+<%= link_to 'Back', email_addresses_path %> <!--TODO -->
