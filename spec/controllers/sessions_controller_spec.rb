@@ -39,6 +39,12 @@ describe SessionsController do
       post :create
       expect(response).to redirect_to(root_path)
     end
+
+    it "logs out current user" do
+      delete :destroy
+      expect(session[:user_id]).to eql(nil)
+      expect(response).to redirect_to(root_path)
+    end
   end
 
 end
